@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgriHub – Smart Farm Management System</title>
+  <meta name="description" content="AgriHub is a modern, browser-based farm management system for managing crops, inventory, tasks, and expenses." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  
+  <div id="auth-screen" class="auth-screen">
+    <div class="auth-bg">
+      <div class="auth-blob auth-blob-1"></div>
+      <div class="auth-blob auth-blob-2"></div>
+      <div class="auth-blob auth-blob-3"></div>
+    </div>
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="logo-icon">🌾</div>
+        <h1 class="logo-text">AgriHub</h1>
+        <p class="logo-tagline">Smart Farm Management System</p>
+      </div>
+
+   
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Login</button>
+        <button class="auth-tab" id="tab-signup" onclick="switchAuthTab('signup')">Sign Up</button>
+      </div>
+
+     
+      <form id="login-form" class="auth-form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="login-username">Username</label>
+          <input type="text" id="login-username" placeholder="Enter your username" required />
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" placeholder="Enter your password" required />
+        </div>
+        <div id="login-error" class="auth-error hidden"></div>
+        <button type="submit" class="btn-primary btn-full">Login →</button>
+      </form>
+
+   
+      <form id="signup-form" class="auth-form hidden" onsubmit="handleSignup(event)">
+        <div class="form-group">
+          <label for="signup-name">Full Name</label>
+          <input type="text" id="signup-name" placeholder="Your full name" required />
+        </div>
+        <div class="form-group">
+          <label for="signup-username">Username</label>
+          <input type="text" id="signup-username" placeholder="Choose a username" required />
+        </div>
+        <div class="form-group">
+          <label for="signup-password">Password</label>
+          <input type="password" id="signup-password" placeholder="Min. 6 characters" required minlength="6" />
+        </div>
+        <div id="signup-error" class="auth-error hidden"></div>
+        <button type="submit" class="btn-primary btn-full">Create Account →</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="app" class="app hidden">
+
+    
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <span class="logo-icon-sm">🌾</span>
+          <span class="sidebar-title">AgriHub</span>
+        </div>
+        <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+      </div>
+
+      <div class="sidebar-user">
+        <div class="user-avatar" id="user-avatar">M</div>
+        <div class="user-info">
+          <span class="user-name" id="user-name">Farmer</span>
+          <span class="user-role">Farm Manager</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active" id="nav-dashboard" onclick="showPage('dashboard')">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Dashboard</span>
+        </a>
+        <a href="#" class="nav-item" id="nav-crops" onclick="showPage('crops')">
+          <span class="nav-icon">🌱</span>
+          <span class="nav-label">Crop Management</span>
+        </a>
+        <a href="#" class="nav-item" id="nav-inventory" onclick="showPage('inventory')">
+          <span class="nav-icon">📦</span>
+          <span class="nav-label">Inventory</span>
+        </a>
+        <a href="#" class="nav-item" id="nav-tasks" onclick="showPage('tasks')">
+          <span class="nav-icon">✅</span>
+          <span class="nav-label">Task Scheduler</span>
+        </a>
+        <a href="#" class="nav-item" id="nav-expenses" onclick="showPage('expenses')">
+          <span class="nav-icon">💰</span>
+          <span class="nav-label">Expense Tracker</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="btn-logout" onclick="handleLogout()">🚪 Logout</button>
+      </div>
+    </aside>
+
+    
+    <main class="main-content" id="main-content">
+
+      
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+          <h2 class="page-title" id="page-title">Dashboard</h2>
+        </div>
+        <div class="topbar-right">
+          <div class="topbar-date" id="topbar-date"></div>
+          <button class="theme-toggle-btn" id="theme-toggle" onclick="toggleTheme()" title="Toggle Light/Dark Mode">🌓</button>
+        </div>
+      </header>
+
+      
+      <section class="page active" id="page-dashboard">
+        <div class="stats-grid">
+          <div class="stat-card stat-green">
+            <div class="stat-icon">🌱</div>
+            <div class="stat-info">
+              <span class="stat-value" id="stat-crops">0</span>
+              <span class="stat-label">Total Crops</span>
+            </div>
+          </div>
+          <div class="stat-card stat-blue">
+            <div class="stat-icon">📦</div>
+            <div class="stat-info">
+              <span class="stat-value" id="stat-inventory">0</span>
+              <span class="stat-label">Inventory Items</span>
+            </div>
+          </div>
+          <div class="stat-card stat-orange">
+            <div class="stat-icon">✅</div>
+            <div class="stat-info">
+              <span class="stat-value" id="stat-tasks">0</span>
+              <span class="stat-label">Pending Tasks</span>
+            </div>
+          </div>
+          <div class="stat-card stat-purple">
+            <div class="stat-icon">💰</div>
+            <div class="stat-info">
+              <span class="stat-value" id="stat-expenses">₹0</span>
+              <span class="stat-label">Total Expenses</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="dash-card">
+            <h3 class="dash-card-title">Expense Overview</h3>
+            <div class="chart-container">
+              <canvas id="expenseChart"></canvas>
+            </div>
+          </div>
+          <div class="dash-card">
+            <h3 class="dash-card-title">Crop Status</h3>
+            <div class="chart-container">
+              <canvas id="cropChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="dash-card">
+            <h3 class="dash-card-title">Recent Tasks</h3>
+            <ul class="recent-list" id="recent-tasks"></ul>
+          </div>
+          <div class="dash-card">
+            <h3 class="dash-card-title">Recent Expenses</h3>
+            <ul class="recent-list" id="recent-expenses"></ul>
+          </div>
+        </div>
+      </section>
+
+     
+      <section class="page" id="page-crops" style="display:none">
+        <div class="page-header">
+          <div class="search-bar">
+            <input type="text" id="crop-search" placeholder="🔍 Search crops..." oninput="renderCrops()" />
+          </div>
+          <button class="btn-primary" onclick="openModal('crop-modal')">+ Add Crop</button>
+        </div>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Crop Name</th>
+                <th>Type</th>
+                <th>Field / Area</th>
+                <th>Planted Date</th>
+                <th>Harvest Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="crops-table-body"></tbody>
+          </table>
+          <div class="empty-state hidden" id="crops-empty">
+            <div class="empty-icon">🌱</div>
+            <p>No crops found. Add your first crop!</p>
+          </div>
+        </div>
+      </section>
+
+      
+      <section class="page" id="page-inventory" style="display:none">
+        <div class="page-header">
+          <div class="search-bar">
+            <input type="text" id="inventory-search" placeholder="🔍 Search inventory..." oninput="renderInventory()" />
+          </div>
+          <button class="btn-primary" onclick="openModal('inventory-modal')">+ Add Item</button>
+        </div>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Item Name</th>
+                <th>Category</th>
+                <th>Quantity</th>
+                <th>Unit</th>
+                <th>Purchase Date</th>
+                <th>Cost (₹)</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="inventory-table-body"></tbody>
+          </table>
+          <div class="empty-state hidden" id="inventory-empty">
+            <div class="empty-icon">📦</div>
+            <p>No inventory items. Add your first item!</p>
+          </div>
+        </div>
+      </section>
+
+      
+      <section class="page" id="page-tasks" style="display:none">
+        <div class="page-header">
+          <div class="search-bar">
+            <input type="text" id="task-search" placeholder="🔍 Search tasks..." oninput="renderTasks()" />
+          </div>
+          <div class="filter-group">
+            <select id="task-filter" onchange="renderTasks()">
+              <option value="all">All Status</option>
+              <option value="pending">Pending</option>
+              <option value="in-progress">In Progress</option>
+              <option value="done">Done</option>
+            </select>
+          </div>
+          <button class="btn-primary" onclick="openModal('task-modal')">+ Add Task</button>
+        </div>
+        <div class="task-cards-grid" id="task-cards"></div>
+        <div class="empty-state hidden" id="tasks-empty">
+          <div class="empty-icon">✅</div>
+          <p>No tasks scheduled. Add your first task!</p>
+        </div>
+      </section>
+
+      
+      <section class="page" id="page-expenses" style="display:none">
+        <div class="page-header">
+          <div class="search-bar">
+            <input type="text" id="expense-search" placeholder="🔍 Search expenses..." oninput="renderExpenses()" />
+          </div>
+          <div class="filter-group">
+            <select id="expense-filter" onchange="renderExpenses()">
+              <option value="all">All Categories</option>
+              <option value="Seeds">Seeds</option>
+              <option value="Fertilizer">Fertilizer</option>
+              <option value="Equipment">Equipment</option>
+              <option value="Labor">Labor</option>
+              <option value="Irrigation">Irrigation</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <button class="btn-primary" onclick="openModal('expense-modal')">+ Add Expense</button>
+        </div>
+        <div class="expense-summary" id="expense-summary"></div>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Amount (₹)</th>
+                <th>Date</th>
+                <th>Notes</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="expenses-table-body"></tbody>
+          </table>
+          <div class="empty-state hidden" id="expenses-empty">
+            <div class="empty-icon">💰</div>
+            <p>No expenses recorded. Add your first expense!</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  
+  <div class="modal-overlay hidden" id="crop-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="crop-modal-title">Add Crop</h3>
+        <button class="modal-close" onclick="closeModal('crop-modal')">✕</button>
+      </div>
+      <form id="crop-form" onsubmit="saveCrop(event)">
+        <input type="hidden" id="crop-id" />
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Crop Name *</label>
+            <input type="text" id="crop-name" placeholder="e.g. Wheat" required />
+          </div>
+          <div class="form-group">
+            <label>Type *</label>
+            <select id="crop-type" required>
+              <option value="">Select type</option>
+              <option>Grain</option>
+              <option>Vegetable</option>
+              <option>Fruit</option>
+              <option>Legume</option>
+              <option>Oilseed</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Field / Area</label>
+            <input type="text" id="crop-field" placeholder="e.g. Field A – 2 acres" />
+          </div>
+          <div class="form-group">
+            <label>Planted Date</label>
+            <input type="date" id="crop-planted" />
+          </div>
+          <div class="form-group">
+            <label>Expected Harvest</label>
+            <input type="date" id="crop-harvest" />
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select id="crop-status">
+              <option value="growing">Growing</option>
+              <option value="harvested">Harvested</option>
+              <option value="failed">Failed</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea id="crop-notes" placeholder="Any additional notes..." rows="3"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal('crop-modal')">Cancel</button>
+          <button type="submit" class="btn-primary">Save Crop</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay hidden" id="inventory-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="inventory-modal-title">Add Inventory Item</h3>
+        <button class="modal-close" onclick="closeModal('inventory-modal')">✕</button>
+      </div>
+      <form id="inventory-form" onsubmit="saveInventory(event)">
+        <input type="hidden" id="inventory-id" />
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Item Name *</label>
+            <input type="text" id="inventory-name" placeholder="e.g. Urea Fertilizer" required />
+          </div>
+          <div class="form-group">
+            <label>Category *</label>
+            <select id="inventory-category" required>
+              <option value="">Select category</option>
+              <option>Seeds</option>
+              <option>Fertilizer</option>
+              <option>Pesticide</option>
+              <option>Equipment</option>
+              <option>Tools</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Quantity *</label>
+            <input type="number" id="inventory-quantity" placeholder="0" min="0" required />
+          </div>
+          <div class="form-group">
+            <label>Unit</label>
+            <select id="inventory-unit">
+              <option>kg</option>
+              <option>liters</option>
+              <option>bags</option>
+              <option>units</option>
+              <option>tons</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Purchase Date</label>
+            <input type="date" id="inventory-date" />
+          </div>
+          <div class="form-group">
+            <label>Cost (₹)</label>
+            <input type="number" id="inventory-cost" placeholder="0" min="0" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea id="inventory-notes" placeholder="Supplier, storage info..." rows="2"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal('inventory-modal')">Cancel</button>
+          <button type="submit" class="btn-primary">Save Item</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Task Modal -->
+  <div class="modal-overlay hidden" id="task-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="task-modal-title">Add Task</h3>
+        <button class="modal-close" onclick="closeModal('task-modal')">✕</button>
+      </div>
+      <form id="task-form" onsubmit="saveTask(event)">
+        <input type="hidden" id="task-id" />
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Task Title *</label>
+            <input type="text" id="task-title" placeholder="e.g. Irrigate Field A" required />
+          </div>
+          <div class="form-group">
+            <label>Priority</label>
+            <select id="task-priority">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Due Date</label>
+            <input type="date" id="task-due" />
+          </div>
+          <div class="form-group">
+            <label>Assigned To</label>
+            <input type="text" id="task-assigned" placeholder="e.g. John / Self" />
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select id="task-status">
+              <option value="pending">Pending</option>
+              <option value="in-progress">In Progress</option>
+              <option value="done">Done</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Related Crop</label>
+            <input type="text" id="task-crop" placeholder="e.g. Wheat" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="task-description" placeholder="Task details..." rows="3"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal('task-modal')">Cancel</button>
+          <button type="submit" class="btn-primary">Save Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Expense Modal -->
+  <div class="modal-overlay hidden" id="expense-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="expense-modal-title">Add Expense</h3>
+        <button class="modal-close" onclick="closeModal('expense-modal')">✕</button>
+      </div>
+      <form id="expense-form" onsubmit="saveExpense(event)">
+        <input type="hidden" id="expense-id" />
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Description *</label>
+            <input type="text" id="expense-desc" placeholder="e.g. Wheat seeds purchase" required />
+          </div>
+          <div class="form-group">
+            <label>Category *</label>
+            <select id="expense-category" required>
+              <option value="">Select category</option>
+              <option>Seeds</option>
+              <option>Fertilizer</option>
+              <option>Equipment</option>
+              <option>Labor</option>
+              <option>Irrigation</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Amount (₹) *</label>
+            <input type="number" id="expense-amount" placeholder="0" min="0" required />
+          </div>
+          <div class="form-group">
+            <label>Date *</label>
+            <input type="date" id="expense-date" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea id="expense-notes" placeholder="Additional info..." rows="2"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal('expense-modal')">Cancel</button>
+          <button type="submit" class="btn-primary">Save Expense</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast hidden" id="toast"></div>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
